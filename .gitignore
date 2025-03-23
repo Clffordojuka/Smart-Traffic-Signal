@@ -1,0 +1,26 @@
+# Ignore virtual environments
+venv/
+env/
+.venv/
+
+# Ignore video files
+*.avi
+*.mp4
+
+# Ignore model weights if hosted externally
+*.pt
+
+# Ignore temp files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.tmp
+*.swp
+
+# Ignore Streamlit cache
+.streamlit/
+
+# Ignore Jupyter files
+.ipynb_checkpoints/
