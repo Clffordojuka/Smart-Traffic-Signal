@@ -54,16 +54,22 @@ if uploaded_file:
         if not ret or frame_count > 200:  # Limit frames for speed
             break
 
-        results = model(frame, verbose=False)[0]
+        results = model(frame, verbose=False, conf=0.25)[0]
         lane_counts = [0, 0, 0]
 
         for box in results.boxes:
-            cls = int(box.cls[0])
-            if cls in vehicle_classes:
-                x1, y1, x2, y2 = map(int, box.xyxy[0])
-                cx = (x1 + x2) // 2
-                lane_idx = min(cx // lane_width, 2)
-                lane_counts[lane_idx] += 1
+           cls = int(box.cls[0])
+           if cls in vehicle_classes:
+              x1, y1, x2, y2 = map(int, box.xyxy[0])
+              cx = (x1 + x2) // 2
+              lane_idx = min(cx // lane_width, 2)
+              lane_counts[lane_idx] += 1
+        
+             # 🖼️ Draw bounding box and label
+              cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+              cv2.putText(frame, f"Class: {cls}", (x1, y1 - 10), 
+                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
 
         # Debugging output
         st.write(f"Frame {frame_count}: Lane counts - {lane_counts}")
