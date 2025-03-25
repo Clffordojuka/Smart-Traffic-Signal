@@ -90,8 +90,11 @@ if uploaded_file:
         # Real-time traffic bar chart
         lane_df = pd.DataFrame({'Lane': ['1', '2', '3'], 'Vehicles': lane_counts})
         bar_chart = alt.Chart(lane_df).mark_bar().encode(
-            x='Lane', y='Vehicles', color=alt.Color('Lane', scale=alt.Scale(scheme='category10'))
+            x=alt.X('Lane:N', title='Lane Number'),
+            y=alt.Y('Vehicles:Q', title='Number of Vehicles'),
+            color=alt.Color('Lane:N', scale=alt.Scale(scheme='category10'))
         ).properties(width=400, height=300)
+        
         chart_placeholder.altair_chart(bar_chart, use_container_width=True)
 
         # Show current frame in app
