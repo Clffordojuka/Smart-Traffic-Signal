@@ -54,6 +54,8 @@ if uploaded_file:
         if not ret or frame_count > 200:  # Limit frames for speed
             break
 
+        st.write(f"Frame {frame_count}: YOLO Detections - {results}")
+
         results = model(frame, verbose=False, conf=0.25)[0]
         lane_counts = [0, 0, 0]
 
