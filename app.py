@@ -65,6 +65,9 @@ if uploaded_file:
                 lane_idx = min(cx // lane_width, 2)
                 lane_counts[lane_idx] += 1
 
+        # Debugging output
+        st.write(f"Frame {frame_count}: Lane counts - {lane_counts}")
+
         max_lane = np.argmax(lane_counts)
         lane_signals = ['Red', 'Red', 'Red']
         lane_signals[max_lane] = 'Green'
