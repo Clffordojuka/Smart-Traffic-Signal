@@ -16,7 +16,7 @@ uploaded_file = st.file_uploader("Upload a Traffic Image", type=["jpg", "png", "
 # Load YOLO model
 @st.cache_resource
 def load_model():
-    return YOLO("yolov8l.pt")  # Updated model
+    return YOLO("yolov8l.pt")  
 
 model = load_model()
 
@@ -24,7 +24,7 @@ if uploaded_file:
     tfile = tempfile.NamedTemporaryFile(delete=False, suffix=".jpg")
     tfile.write(uploaded_file.read())
     image_path = tfile.name
-    st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
+    st.image(uploaded_file, caption="Uploaded Image", use_container_width=True)
 
     st.success("✅ Image uploaded. Processing...")
 
@@ -33,7 +33,7 @@ if uploaded_file:
     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     # Run YOLO detection
-    results = model(image_rgb, verbose=False, conf=0.15, iou=0.4)[0]  # Adjusted confidence & IOU
+    results = model(image_rgb, verbose=False, conf=0.15, iou=0.4)[0] 
 
     # Draw detections
     for box in results.boxes:
@@ -44,7 +44,7 @@ if uploaded_file:
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
     # Display processed image
-    st.image(image_rgb, caption="Processed Image", use_column_width=True)
+    st.image(image_rgb, caption="Processed Image", use_container_width=True)
 
     # 📥 Download processed image
     processed_img_name = "processed_image.jpg"
