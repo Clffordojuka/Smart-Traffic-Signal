@@ -36,17 +36,12 @@ if uploaded_file:
     results = model(image_rgb, verbose=False, conf=0.15, iou=0.4)[0] 
 
     # Draw detections
-    for box in results[0].boxes:
-        cls_id = int(box.cls[0])  
-        class_name = model.names[cls_id]  
+    for box in results.boxes:
+        cls = int(box.cls[0])
         x1, y1, x2, y2 = map(int, box.xyxy[0])
-
-        # Draw bounding box
         cv2.rectangle(image_rgb, (x1, y1), (x2, y2), (0, 255, 0), 2)
-
-       # Display the correct class label
-        cv2.putText(image_rgb, f"{class_name}", (x1, y1 - 10),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        cv2.putText(image_rgb, f"Class: {cls}", (x1, y1 - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
     # Display processed image
     st.image(image_rgb, caption="Processed Image", use_container_width=True)
