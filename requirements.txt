@@ -1,5 +1,5 @@
 streamlit
-opencv-python-headless
+opencv-python  
 ultralytics
 pandas
 altair
@@ -11,7 +11,3 @@ Pillow
 requests
 matplotlib
 pytz
-datetime
-shutil
-json
-xmltodict
