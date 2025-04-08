@@ -21,38 +21,39 @@ def load_model():
 model = load_model()
 
 if uploaded_file:
-    tfile = tempfile.NamedTemporaryFile(delete=False, suffix=".jpg")
-    tfile.write(uploaded_file.read())
-    image_path = tfile.name
-    st.image(uploaded_file, caption="Uploaded Image", use_container_width=True)
+    # Decode uploaded file directly without saving to disk
+    file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
+    image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
 
-    st.success("✅ Image uploaded. Processing...")
+    if image is None:
+        st.error("❌ Failed to load the image. It might be corrupted or unreadable.")
+    else:
+        st.image(image, caption="Uploaded Image", use_container_width=True)
+        st.success("✅ Image uploaded. Processing...")
 
-    # Read image
-    image = cv2.imread(image_path)
-    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-    # Run YOLO detection
-    results = model(image_rgb, verbose=False, conf=0.15, iou=0.4)[0] 
+        # Run YOLO detection
+        results = model(image_rgb, verbose=False, conf=0.15, iou=0.4)[0] 
 
-    # Draw detections
-    for box in results.boxes:
-        cls = int(box.cls[0])
-        x1, y1, x2, y2 = map(int, box.xyxy[0])
-        cv2.rectangle(image_rgb, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        cv2.putText(image_rgb, f"Class: {cls}", (x1, y1 - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        # Draw detections
+        for box in results.boxes:
+            cls = int(box.cls[0])
+            x1, y1, x2, y2 = map(int, box.xyxy[0])
+            cv2.rectangle(image_rgb, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            cv2.putText(image_rgb, f"Class: {cls}", (x1, y1 - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-    # Display processed image
-    st.image(image_rgb, caption="Processed Image", use_container_width=True)
+        # Display processed image
+        st.image(image_rgb, caption="Processed Image", use_container_width=True)
 
-    # 📥 Download processed image
-    processed_img_name = "processed_image.jpg"
-    processed_img_path = os.path.join(tempfile.gettempdir(), processed_img_name)
-    cv2.imwrite(processed_img_path, cv2.cvtColor(image_rgb, cv2.COLOR_RGB2BGR))
+        # Download processed image
+        processed_img_name = "processed_image.jpg"
+        processed_img_path = os.path.join(tempfile.gettempdir(), processed_img_name)
+        cv2.imwrite(processed_img_path, cv2.cvtColor(image_rgb, cv2.COLOR_RGB2BGR))
 
-    with open(processed_img_path, "rb") as file:
-        st.download_button(label="📥 Download Processed Image",
-                           data=file,
-                           file_name=processed_img_name,
-                           mime="image/jpeg")
+        with open(processed_img_path, "rb") as file:
+            st.download_button(label="📥 Download Processed Image",
+                               data=file,
+                               file_name=processed_img_name,
+                               mime="image/jpeg")
