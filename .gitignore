@@ -42,3 +42,6 @@ Thumbs.db
 
 # Ignore VS Code workspace settings
 .vscode/
+
+# Firebase credentials
+firebase_config/serviceAccountKey.json
