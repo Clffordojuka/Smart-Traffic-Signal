@@ -6,6 +6,7 @@ from ultralytics import YOLO
 import os
 import pandas as pd
 import altair as alt
+import json
 import firebase_admin
 from firebase_admin import credentials, db
 from datetime import datetime
@@ -15,7 +16,8 @@ st.title("🚦 Smart Traffic Management System")
 
 @st.cache_resource
 def init_firebase():
-    cred = credentials.Certificate("firebase_config/serviceAccountKey.json")
+    firebase_json = st.secrets["firebase"]
+    cred = credentials.Certificate(json.loads(json.dumps(firebase_json)))
     firebase_admin.initialize_app(cred, {
         'databaseURL': 'https://smart-traffic-system-6efc1-default-rtdb.firebaseio.com/'
     })
