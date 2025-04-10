@@ -7,6 +7,7 @@ import os
 import pandas as pd
 import altair as alt
 import json
+import io
 import firebase_admin
 from firebase_admin import credentials, db
 from datetime import datetime
@@ -17,6 +18,8 @@ st.title("🚦 Smart Traffic Management System")
 @st.cache_resource
 def init_firebase():
     firebase_dict = dict(st.secrets["firebase"])
+    cert_file = io.StringIO(json.dumps(firebase_dict))
+    cred = credentials.Certificate(cert_file)
     cred = credentials.Certificate(firebase_dict)
     firebase_admin.initialize_app(cred, {
         'databaseURL': 'https://smart-traffic-system-6efc1-default-rtdb.firebaseio.com/'
