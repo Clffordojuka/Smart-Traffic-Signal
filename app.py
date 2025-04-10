@@ -16,8 +16,8 @@ st.title("🚦 Smart Traffic Management System")
 
 @st.cache_resource
 def init_firebase():
-    firebase_json = st.secrets["firebase"]
-    cred = credentials.Certificate(json.loads(json.dumps(firebase_json)))
+    firebase_dict = {key: value for key, value in st.secrets["firebase"].items()}
+    cred = credentials.Certificate(json.loads(json.dumps(firebase_dict)))
     firebase_admin.initialize_app(cred, {
         'databaseURL': 'https://smart-traffic-system-6efc1-default-rtdb.firebaseio.com/'
     })
