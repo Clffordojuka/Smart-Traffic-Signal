@@ -17,18 +17,27 @@ st.title("🚦 Smart Traffic Management System")
 
 @st.cache_resource
 def init_firebase():
-    firebase_dict = dict(st.secrets["firebase"])
-
-    with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".json") as f:
-        json.dump(firebase_dict, f)
+    
+    # Load Firebase config from Streamlit secrets
+    firebase_config = dict(st.secrets["firebase"])
+    
+    # Fix private key formatting
+    private_key = firebase_config["private_key"]
+    
+    # Ensure proper PEM formatting
+    if "\\n" in private_key:
+        firebase_config["private_key"] = private_key.replace("\\n", "\n")
+    
+    # Create temporary credentials file
+    with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
+        json.dump(firebase_config, f, ensure_ascii=False)
         temp_path = f.name
-
+    
+    # Initialize Firebase
     cred = credentials.Certificate(temp_path)
-
-    if not firebase_admin._apps:
-        firebase_admin.initialize_app(cred, {
-            'databaseURL': 'https://smart-traffic-system-6efc1-default-rtdb.firebaseio.com/'
-        })
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': 'https://smart-traffic-system-6efc1-default-rtdb.firebaseio.com/'
+    })
 
 init_firebase()
 
