@@ -7,7 +7,7 @@ import os
 import pandas as pd
 import altair as alt
 import json
-import io
+import tempfile
 import firebase_admin
 from firebase_admin import credentials, db
 from datetime import datetime
@@ -18,10 +18,17 @@ st.title("🚦 Smart Traffic Management System")
 @st.cache_resource
 def init_firebase():
     firebase_dict = dict(st.secrets["firebase"])
-    cred = credentials.Certificate(firebase_dict)
-    firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://smart-traffic-system-6efc1-default-rtdb.firebaseio.com/'
-    })
+
+    with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".json") as f:
+        json.dump(firebase_dict, f)
+        temp_path = f.name
+
+    cred = credentials.Certificate(temp_path)
+
+    if not firebase_admin._apps:
+        firebase_admin.initialize_app(cred, {
+            'databaseURL': 'https://smart-traffic-system-6efc1-default-rtdb.firebaseio.com/'
+        })
 
 init_firebase()
 
