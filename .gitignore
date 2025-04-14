@@ -45,3 +45,5 @@ Thumbs.db
 
 # Firebase credentials
 firebase_config/serviceAccountKey.json
+
+.streamlit/secrets.toml

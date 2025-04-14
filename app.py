@@ -17,28 +17,44 @@ st.title("🚦 Smart Traffic Management System")
 
 @st.cache_resource
 def init_firebase():
-    
-    # Load Firebase config from Streamlit secrets
-    firebase_config = dict(st.secrets["firebase"])
-    
-    # Fix private key formatting
-    private_key = firebase_config["private_key"]
-    
-    # Ensure proper PEM formatting
-    if "\\n" in private_key:
-        firebase_config["private_key"] = private_key.replace("\\n", "\n")
-    
-    # Create temporary credentials file
-    with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
-        json.dump(firebase_config, f, ensure_ascii=False)
-        temp_path = f.name
-    
-    # Initialize Firebase
-    cred = credentials.Certificate(temp_path)
-    firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://smart-traffic-system-6efc1-default-rtdb.firebaseio.com/'
-    })
+    try:
+        # Check if Firebase secrets exist
+        if "firebase" not in st.secrets:
+            raise KeyError("❌ 'firebase' section missing in Streamlit secrets")
 
+        firebase_config = dict(st.secrets["firebase"])
+        
+        # Verify all required keys exist
+        required_keys = ["private_key", "project_id", "client_email"]
+        missing_keys = [key for key in required_keys if key not in firebase_config]
+        if missing_keys:
+            raise KeyError(f"❌ Missing keys: {', '.join(missing_keys)}")
+
+        # Fix newline formatting
+        firebase_config["private_key"] = firebase_config["private_key"].replace("\\n", "\n")
+
+        # Create temporary credentials file
+        with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
+            json.dump(firebase_config, f, ensure_ascii=False)
+            temp_path = f.name
+
+        # Initialize Firebase
+        cred = credentials.Certificate(temp_path)
+        firebase_admin.initialize_app(cred, {
+            'databaseURL': 'https://smart-traffic-system-6efc1-default-rtdb.firebaseio.com/'
+        })
+        st.success("✅ Firebase initialized successfully!")
+
+    except Exception as e:
+        st.error(f"""
+        🔥 Firebase Error: {str(e)}
+        
+        Verify:
+        1. `private_key` exists in `.streamlit/secrets.toml`
+        2. No typos in key names
+        3. Secrets are configured on Streamlit Cloud (if deployed)
+        """)
+        raise
 init_firebase()
 
 # Upload image
