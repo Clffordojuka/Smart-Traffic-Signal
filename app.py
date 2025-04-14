@@ -7,7 +7,6 @@ import os
 import pandas as pd
 import altair as alt
 import json
-import tempfile
 import firebase_admin
 from firebase_admin import credentials, db
 from datetime import datetime
