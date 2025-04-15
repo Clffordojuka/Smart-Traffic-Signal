@@ -37,12 +37,15 @@ def init_firebase():
             json.dump(firebase_config, f, ensure_ascii=False)
             temp_path = f.name
 
-        # Initialize Firebase
-        cred = credentials.Certificate(temp_path)
-        firebase_admin.initialize_app(cred, {
-            'databaseURL': 'https://smart-traffic-system-6efc1-default-rtdb.firebaseio.com/'
-        })
-        st.success("✅ Firebase initialized successfully!")
+        # ✅ Initialize Firebase only if not already initialized
+        if not firebase_admin._apps:
+            cred = credentials.Certificate(temp_path)
+            firebase_admin.initialize_app(cred, {
+                'databaseURL': 'https://smart-traffic-system-6efc1-default-rtdb.firebaseio.com/'
+            })
+            st.success("✅ Firebase initialized successfully!")
+        else:
+            st.info("ℹ️ Firebase already initialized.")
 
     except Exception as e:
         st.error(f"""
