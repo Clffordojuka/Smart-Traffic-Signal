@@ -93,7 +93,7 @@ if uploaded_file:
         # Process detections
         for box in results.boxes:
             cls = int(box.cls[0])
-            # Vehicle classes in COCO dataset: 2(car), 3(motorcycle), 5(bus), 7(truck)
+            # Vehicle classes in COCO dataset:
             if cls in [2, 3, 5, 7]:
                 vehicle_count += 1
                 x1, y1, x2, y2 = map(int, box.xyxy[0])
